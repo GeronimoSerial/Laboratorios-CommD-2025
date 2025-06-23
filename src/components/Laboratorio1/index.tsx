@@ -206,8 +206,7 @@ const Laboratorio1 = () => {
         <div className="flex flex-col items-center gap-4 mb-6">
           <div className="flex items-center gap-4">
             <span className="text-gray-700 font-medium">
-              Frecuencia (HZ):{" "}
-              <span className="text-blue-600">{frecuencias}</span>
+              Frecuencias : <span className="text-blue-600">{frecuencias}</span>
             </span>
             <Button
               variant="outline"
