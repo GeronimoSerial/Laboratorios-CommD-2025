@@ -1,6 +1,7 @@
+import { Footer } from "@/components/templates/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExternalLink, Network, Users, BookOpen } from "lucide-react";
+import { ExternalLink, Users, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -23,7 +24,7 @@ const Index = () => {
       numero: 3,
       titulo: "Codificación y Modulación",
       descripcion:
-        " Entiende cómo los datos se transforman en señales mediante técnicas de codificación digital y los principios de modulación analógica.",
+        "Entiende cómo los datos se transforman en señales mediante técnicas de codificación digital y los principios de modulación analógica.",
       route: "/lab3",
     },
     {
@@ -45,26 +46,22 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
       <header className="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white py-12 md:py-20 shadow-xl">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 opacity-10">
-          {/* <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==')]"></div> */}
-        </div>
+        <div className="absolute inset-0 opacity-10" />
 
         <div className="container mx-auto px-6 text-center relative z-10">
-          {/* Institutional Logos */}
+          {/* Logos */}
           <div className="flex justify-center items-center gap-8 mb-8">
             <div className="backdrop-blur-sm p-4 rounded-xl shadow-lg w-40 h-40 md:w-40 md:h-40 flex items-center justify-center">
               <img
-                src="/Logo-UNNE.png"
+                src="/Logo-UNNE.webp"
                 className="aspect-[308/308] object-contain"
                 alt=""
               />
             </div>
             <div className="backdrop-blur-sm p-4 rounded-xl shadow-lg w-40 h-40 md:w-40 md:h-40 flex items-center justify-center">
               <img
-                src="/facena.png"
+                src="/facena.webp"
                 className="aspect-[308/308] object-contain"
                 alt=""
               />
@@ -82,7 +79,6 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Descripción del Trabajo Práctico */}
       <section className="py-16 px-6 relative">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSgxNSkiPjxyZWN0IHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgZmlsbD0icmdiYSgwLDExNSwyMDUsMC4wMikiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiLz48L3N2Zz4=')] opacity-20"></div>
         <div className="container mx-auto max-w-5xl relative">
@@ -129,7 +125,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Laboratorios Grid */}
       <section className="py-20 px-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-white opacity-70"></div>
         <div className="container mx-auto max-w-7xl relative">
@@ -177,31 +172,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-12 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==')]"></div>
-        </div>
-        <div className="container mx-auto px-6 text-center relative z-10">
-          <div className="flex flex-col items-center opacity-0 animate-fade-in [animation-fill-mode:forwards]">
-            <div className="flex items-center justify-center mb-4 bg-blue-600/20 p-3 rounded-full">
-              <Network className="w-8 h-8 text-blue-300" />
-            </div>
-            <h3 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100 mb-2">
-              Comunicaciones de Datos 2025
-            </h3>
-            <p className="text-blue-100 max-w-2xl">
-              Universidad Nacional del Nordeste • Facultad de Ciencias Exactas
-              Naturales y Agrimensura • Licenciatura en Sistemas de Información.
-            </p>
-            <div className="w-24 h-1 bg-blue-500 rounded-full my-6"></div>
-            <p className="text-blue-200 text-sm">
-              {new Date().getDate()}/{new Date().getMonth()}/
-              {new Date().getFullYear()}
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -9,15 +8,16 @@ import NotFound from "./pages/NotFound";
 import Lab2 from "./pages/Lab2";
 import Lab3 from "./pages/Lab3";
 import Lab4 from "./pages/Lab4";
+import ScrollToTop from "./hooks/scroll-to-top";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/lab1" element={<Lab1 />} />
@@ -25,7 +25,6 @@ const App = () => (
           <Route path="/lab3" element={<Lab3 />} />
           <Route path="/lab4" element={<Lab4 />} />
 
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

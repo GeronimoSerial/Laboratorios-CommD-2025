@@ -1,49 +1,20 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Laboratorio3 from "@/components/Laboratorio3";
-import { ArrowLeft, Network, BookOpen, Users, ChartLine } from "lucide-react";
-import { Link } from "react-router-dom";
+import { BookOpen, ChartLine } from "lucide-react";
 import EncodingModulationContent from "@/components/Laboratorio3/teoria";
-import { integrantes } from "@/lib/utils";
+import { Header } from "@/components/templates/header";
+import { Sidebar } from "@/components/templates/sidebar";
+import { Footer } from "@/components/templates/footer";
 
 const Lab3 = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-blue-900 to-blue-800 text-white py-8">
-        <div className="container mx-auto px-6">
-          <div className="flex items-center gap-4 mb-4">
-            <Link to="/">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-blue-900 border-white hover:bg-white/10"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Volver
-              </Button>
-            </Link>
-            <Badge variant="secondary" className="bg-blue-700 text-white">
-              Laboratorio 3
-            </Badge>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Network className="w-8 h-8" />
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold">
-                Codificación de Datos
-              </h1>
-              <p className="text-blue-100 text-lg">
-                Codificación de datos y modulación de señales para transmisión
-                digital.
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header
+        title="Codificación de Datos"
+        lab="Laboratorio 3"
+        description="Codificación de datos y modulación de señales para transmisión digital."
+      />
 
       <div className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -89,34 +60,10 @@ const Lab3 = () => {
             </Tabs>
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="space-y-6 sticky top-6">
-              {/* Team Members */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Users className="w-5 h-5" />
-                    Integrantes del Grupo
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {integrantes.map((integrante, index) => (
-                      <li
-                        key={index}
-                        className="text-sm text-gray-600 p-2 bg-gray-50 rounded"
-                      >
-                        {integrante}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+          <Sidebar />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
