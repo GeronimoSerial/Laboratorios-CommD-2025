@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Button } from "../ui/button";
 import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables);
@@ -61,7 +60,7 @@ const Laboratorio2 = () => {
           {
             label: "Capacidad del canal (bps)",
             data: chartData,
-            borderColor: "#3b82f6", // Azul moderno
+            borderColor: "#3b82f6",
             backgroundColor: "rgba(59, 130, 246, 0.1)",
             borderWidth: 2,
             tension: 0.1,
@@ -150,7 +149,7 @@ const Laboratorio2 = () => {
           {
             label: "Capacidad del canal (bps)",
             data: chartData,
-            borderColor: "#ef4444", // Rojo moderno
+            borderColor: "#ef4444",
             backgroundColor: "rgba(239, 68, 68, 0.1)",
             borderWidth: 2,
             tension: 0.1,

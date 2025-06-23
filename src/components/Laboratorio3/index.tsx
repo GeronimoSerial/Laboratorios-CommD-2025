@@ -83,7 +83,7 @@ const Laboratorio3 = () => {
     }
   };
 
-  // --- Algoritmos de codificación corregidos ---
+  // --- Algoritmos de codificación  ---
   const drawNRZL = (ctx, bits) => {
     const bitWidth = CANVAS_WIDTH / bits.length;
     let x = 0;
@@ -153,8 +153,7 @@ const Laboratorio3 = () => {
     const bitWidth = CANVAS_WIDTH / bits.length;
     let x = 0;
     let currentY = CANVAS_HEIGHT * 0.5;
-    let lastSignal = true; // true = positivo, false = negativo
-
+    let lastSignal = true; //
     ctx.strokeStyle = "red";
     ctx.lineWidth = 2;
 
@@ -192,7 +191,7 @@ const Laboratorio3 = () => {
     const bitWidth = CANVAS_WIDTH / bits.length;
     let x = 0;
     let currentY = CANVAS_HEIGHT * 0.5;
-    let lastSignal = true; // true = positivo, false = negativo
+    let lastSignal = true; //
 
     ctx.strokeStyle = "red";
     ctx.lineWidth = 2;

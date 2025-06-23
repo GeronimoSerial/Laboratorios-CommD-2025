@@ -18,7 +18,6 @@ const Lab3 = () => {
 
       <div className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-3">
             <Tabs defaultValue="teoria" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
@@ -35,7 +34,6 @@ const Lab3 = () => {
                 </TabsTrigger>
               </TabsList>
 
-              {/* Teoría */}
               <TabsContent value="teoria" className="space-y-6">
                 <Card>
                   <CardHeader>

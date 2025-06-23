@@ -27,9 +27,9 @@ const Laboratorio1 = () => {
         datasets: [
           {
             label: "Función sinusoidal",
-            borderColor: "#3b82f6", // Azul más moderno
+            borderColor: "#3b82f6",
             borderWidth: 2,
-            backgroundColor: "rgba(59, 130, 246, 0.1)", // Sutil relleno
+            backgroundColor: "rgba(59, 130, 246, 0.1)",
             tension: 0.1, // Suaviza ligeramente la curva
             fill: true,
             data: [],

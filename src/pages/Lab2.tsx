@@ -10,7 +10,6 @@ import { Footer } from "@/components/templates/footer";
 const Lab2 = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
       <Header
         title="Transmisión de Datos"
         lab="Laboratorio 2"
@@ -19,7 +18,6 @@ const Lab2 = () => {
 
       <div className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-3">
             <Tabs defaultValue="teoria" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
