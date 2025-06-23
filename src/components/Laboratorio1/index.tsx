@@ -1,20 +1,45 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Chart } from "chart.js/auto";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const Laboratorio1 = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<Chart | null>(null);
+
   const [frecuencias, setFrecuencias] = useState(1);
+  const [waveType, setWaveType] = useState<"sine" | "square">("sine");
+  const [periodsToShow, setPeriodsToShow] = useState(2);
+
   const [formData, setFormData] = useState({
     frequency: 1.0,
     amplitude: 1.0,
     phase: 0.0,
   });
 
+  // Memoizar fase en radianes
+  const phaseInRadians = useMemo(
+    () => (formData.phase * Math.PI) / 180,
+    [formData.phase]
+  );
+
+  // Memoizar etiqueta de la onda
+  const waveLabel = useMemo(() => {
+    return waveType === "sine"
+      ? `Senoide (${formData.frequency} Hz)`
+      : `Onda Cuadrada (${frecuencias} armónicos)`;
+  }, [waveType, formData.frequency, frecuencias]);
+
+  // Configuración inicial del gráfico
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -26,12 +51,13 @@ const Laboratorio1 = () => {
       data: {
         datasets: [
           {
-            label: "Función sinusoidal",
+            label: waveLabel,
             borderColor: "#3b82f6",
             borderWidth: 2,
-            backgroundColor: "rgba(59, 130, 246, 0.1)",
-            tension: 0.1, // Suaviza ligeramente la curva
-            fill: true,
+            backgroundColor: "rgba(59, 130, 246, 0.05)",
+            tension: 0,
+            fill: false,
+            pointRadius: 0,
             data: [],
           },
         ],
@@ -42,8 +68,6 @@ const Laboratorio1 = () => {
         scales: {
           x: {
             type: "linear",
-            min: 0,
-            max: 3,
             title: {
               display: true,
               text: "Tiempo (s)",
@@ -57,8 +81,6 @@ const Laboratorio1 = () => {
           },
           y: {
             type: "linear",
-            min: -formData.amplitude,
-            max: formData.amplitude,
             title: {
               display: true,
               text: "Amplitud",
@@ -74,14 +96,9 @@ const Laboratorio1 = () => {
         plugins: {
           legend: {
             position: "top",
-            labels: {
-              font: {
-                size: 14,
-              },
-            },
           },
           tooltip: {
-            mode: "index",
+            mode: "nearest",
             intersect: false,
           },
         },
@@ -90,56 +107,71 @@ const Laboratorio1 = () => {
           axis: "x",
           intersect: false,
         },
-        datasets: {
-          line: {
-            pointRadius: 0,
-          },
-        },
-        elements: {
-          point: {
-            radius: 0,
-            hoverRadius: 5,
-          },
-        },
       },
     });
 
     return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-      }
+      chartRef.current?.destroy();
     };
   }, []);
 
+  // Actualización de datos y escalas
   useEffect(() => {
     if (!chartRef.current) return;
-    const { frequency, amplitude, phase } = formData;
+
+    const { frequency, amplitude } = formData;
+    const safeFrequency = frequency > 0 ? frequency : 1; // evitar división por cero
+    const dataPoints = 2000;
+    const totalTime = periodsToShow / safeFrequency;
     const data = [];
-    const k = frecuencias * 2;
-    for (let i = 0; i < 1000; i++) {
-      const x = (i / 1000) * Math.PI;
+
+    // Estimación teórica de amplitud máxima
+    let maxAmplitude = amplitude;
+    if (waveType === "square") {
+      const harmonics = Array.from(
+        { length: frecuencias },
+        (_, i) => 2 * i + 1
+      );
+      const sum = harmonics.reduce((acc, n) => acc + 1 / n, 0);
+      maxAmplitude = (4 / Math.PI) * amplitude * sum;
+    }
+
+    for (let i = 0; i <= dataPoints; i++) {
+      const x = (i / dataPoints) * totalTime;
       let y = 0;
-      for (let j = 0; j <= k; j++) {
-        if (j % 2 !== 0) {
+
+      if (waveType === "sine") {
+        y = amplitude * Math.sin(2 * Math.PI * frequency * x + phaseInRadians);
+      } else {
+        for (let j = 1; j <= 2 * frecuencias - 1; j += 2) {
           y +=
-            amplitude *
-            (1 / j) *
-            Math.sin(2 * Math.PI * frequency * j * x + phase);
+            ((4 * amplitude) / (Math.PI * j)) *
+            Math.sin(2 * Math.PI * j * frequency * x + phaseInRadians);
         }
       }
+
       data.push({ x, y });
     }
-    chartRef.current.data.datasets[0].data = data;
-    chartRef.current.options.scales = {
-      ...chartRef.current.options.scales,
-      y: {
-        ...chartRef.current.options.scales?.y,
-        min: -amplitude,
-        max: amplitude,
-      },
-    };
-    chartRef.current.update();
-  }, [formData, frecuencias]);
+
+    const chart = chartRef.current;
+    chart.data.datasets[0].data = data;
+    chart.data.datasets[0].label = waveLabel;
+
+    // Escalado dinámico
+    chart.options.scales!.x!.min = 0;
+    chart.options.scales!.x!.max = totalTime;
+    chart.options.scales!.y!.min = -maxAmplitude * 1.1;
+    chart.options.scales!.y!.max = maxAmplitude * 1.1;
+
+    chart.update();
+  }, [
+    formData,
+    frecuencias,
+    waveType,
+    periodsToShow,
+    phaseInRadians,
+    waveLabel,
+  ]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -152,43 +184,35 @@ const Laboratorio1 = () => {
   return (
     <Card className="w-full shadow-sm">
       <CardContent className="pt-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="space-y-2">
-            <Label htmlFor="frequency" className="font-medium text-gray-700">
-              Frecuencia (Hz):
-            </Label>
+            <Label htmlFor="frequency">Frecuencia (Hz):</Label>
             <Input
               type="number"
               id="frequency"
               name="frequency"
-              min={0}
-              max={1000}
+              min={0.1}
+              max={10}
               step={0.1}
               value={formData.frequency}
               onChange={handleInputChange}
-              className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="amplitude" className="font-medium text-gray-700">
-              Amplitud:
-            </Label>
+            <Label htmlFor="amplitude">Amplitud:</Label>
             <Input
               type="number"
               id="amplitude"
               name="amplitude"
-              min={0}
-              max={100}
+              min={0.1}
+              max={2}
               step={0.1}
               value={formData.amplitude}
               onChange={handleInputChange}
-              className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phase" className="font-medium text-gray-700">
-              Fase (grados):
-            </Label>
+            <Label htmlFor="phase">Fase (grados):</Label>
             <Input
               type="number"
               id="phase"
@@ -198,34 +222,60 @@ const Laboratorio1 = () => {
               step={1}
               value={formData.phase}
               onChange={handleInputChange}
-              className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-4 mb-6">
-          <div className="flex items-center gap-4">
-            <span className="text-gray-700 font-medium">
-              Frecuencias : <span className="text-blue-600">{frecuencias}</span>
-            </span>
-            <Button
-              variant="outline"
-              onClick={() => setFrecuencias((prev) => prev + 1)}
-              className="border-blue-500 text-blue-600 hover:bg-blue-50"
+          <div className="space-y-2">
+            <Label>Tipo de Onda:</Label>
+            <Select
+              value={waveType}
+              onValueChange={(v) => setWaveType(v as "sine" | "square")}
             >
-              + Aumentar frecuencia
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setFrecuencias((prev) => Math.max(1, prev - 1))}
-              className="border-red-500 text-red-600 hover:bg-red-50"
-            >
-              - Quitar frecuencia
-            </Button>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccione" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="sine">Sinusoidal</SelectItem>
+                <SelectItem value="square">Cuadrada</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
-        <div className="w-full aspect-[16/9] bg-gray-50 p-4 rounded-md border border-gray-200">
+        {waveType === "square" && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="space-y-2">
+              <Label>Armónicos: {frecuencias}</Label>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setFrecuencias((prev) => Math.max(1, prev - 1))
+                  }
+                >
+                  -
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setFrecuencias((prev) => prev + 1)}
+                >
+                  +
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Períodos a mostrar:</Label>
+              <Input
+                type="number"
+                min={1}
+                max={10}
+                value={periodsToShow}
+                onChange={(e) => setPeriodsToShow(Number(e.target.value))}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="w-full aspect-video bg-gray-50 p-4 rounded-md border border-gray-200">
           <canvas ref={canvasRef} />
         </div>
       </CardContent>
