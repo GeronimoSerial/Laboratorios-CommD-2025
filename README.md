@@ -1,12 +1,11 @@
 # Laboratorios de Comunicación de Datos
 
-Aplicación web interactiva para los laboratorios de la materia Comunicación de Datos de la Facultad de Ciencias Exactas y Naturales y Agrimensura (FACENA) de la Universidad Nacional del Nordeste (UNNE).
+Aplicación web interactiva para los laboratorios de la materia Comunicaciónes de Datos de la Facultad de Ciencias Exactas y Naturales y Agrimensura (FACENA) de la Universidad Nacional del Nordeste (UNNE).
 
 ## 🚀 Características
 
-- Cuatro laboratorios interactivos que cubren temas fundamentales de comunicación de datos
+- Cuatro laboratorios interactivos que cubren temas fundamentales de comunicaciónes de datos
 - Interfaz moderna y responsiva construida con React y TypeScript
-- Diseño atractivo con componentes de shadcn/ui
 - Navegación intuitiva entre los diferentes módulos
 
 ## 🔬 Laboratorios Incluidos
@@ -40,7 +39,6 @@ Aplicación web interactiva para los laboratorios de la materia Comunicación de
 - [TypeScript](https://www.typescriptlang.org/) - JavaScript tipado estáticamente
 - [Vite](https://vitejs.dev/) - Herramienta de construcción de frontend
 - [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utilitario
-- [shadcn/ui](https://ui.shadcn.com/) - Componentes UI accesibles
 - [React Router](https://reactrouter.com/) - Enrutamiento en el cliente
 
 ## 🚀 Comenzando
@@ -55,8 +53,8 @@ Aplicación web interactiva para los laboratorios de la materia Comunicación de
 1. Clonar el repositorio:
 
    ```bash
-   git clone https://github.com/tu-usuario/datos-labs-showcase.git
-   cd datos-labs-showcase
+   git clone https://github.com/GeronimoSerial/Laboratorios-CommD-2025.git
+   cd Laboratorios-CommD-2025
    ```
 
 2. Instalar dependencias:
@@ -94,4 +92,4 @@ Las contribuciones son bienvenidas. Por favor, abre un issue primero para discut
 
 ---
 
-Desarrollado por el Grupo 25 para la materia Comunicación de Datos - FACENA UNNE
+Desarrollado por el Grupo 25 para la materia Comunicaciónes de Datos - FACENA UNNE
