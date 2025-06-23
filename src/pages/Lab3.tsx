@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Laboratorio3 from "@/components/Laboratorio3";
-import { ArrowLeft, Network, BookOpen, Target, Users } from "lucide-react";
+import { ArrowLeft, Network, BookOpen, Users, ChartLine } from "lucide-react";
 import { Link } from "react-router-dom";
 import EncodingModulationContent from "@/components/Laboratorio3/teoria";
 import { integrantes } from "@/lib/utils";
@@ -56,10 +56,10 @@ const Lab3 = () => {
                   Teoría
                 </TabsTrigger>
                 <TabsTrigger
-                  value="Calculadora"
+                  value="graficos"
                   className="flex items-center gap-2"
                 >
-                  <Target className="w-4 h-4" />
+                  <ChartLine className="w-4 h-4" />
                   Graficos
                 </TabsTrigger>
               </TabsList>
@@ -76,7 +76,7 @@ const Lab3 = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="Calculadora" className="space-y-6">
+              <TabsContent value="graficos" className="space-y-6">
                 <Card>
                   <CardHeader>
                     <CardTitle className=""></CardTitle>

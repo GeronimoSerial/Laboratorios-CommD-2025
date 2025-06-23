@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Network, BookOpen, Target, Users } from "lucide-react";
+import { ArrowLeft, Network, BookOpen, Users, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 import TransmissionMediaContent from "@/components/Laboratorio4/teoria";
 import CalcDistancia from "@/components/Laboratorio4/calc_distancia_max";
@@ -61,13 +61,14 @@ const Lab4 = () => {
                   value="calculadora"
                   className="flex items-center gap-2"
                 >
-                  <Target className="w-4 h-4" />
+                  <Calculator className="w-4 h-4" />
                   Calculadora Ganancia
                 </TabsTrigger>
                 <TabsTrigger
                   value="calculadora2"
                   className="flex items-center gap-2"
                 >
+                  <Calculator className="w-4 h-4" />
                   Calculadora Distancia Maxima
                 </TabsTrigger>
               </TabsList>

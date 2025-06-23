@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Laboratorio2 from "@/components/Laboratorio2";
-import { ArrowLeft, Network, BookOpen, Target, Users } from "lucide-react";
+import { ArrowLeft, Network, BookOpen, Users, Calculator } from "lucide-react";
 import { Link } from "react-router-dom";
 import DataTransmissionContent from "@/components/Laboratorio2/teoria";
 import { integrantes } from "@/lib/utils";
@@ -60,8 +60,8 @@ const Lab2 = () => {
                   value="Calculadora"
                   className="flex items-center gap-2"
                 >
-                  <Target className="w-4 h-4" />
-                  Graficos
+                  <Calculator className="w-4 h-4" />
+                  Calculadora
                 </TabsTrigger>
               </TabsList>
 

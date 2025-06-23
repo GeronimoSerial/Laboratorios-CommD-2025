@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Laboratorio1 from "@/components/Laboratorio1";
-import { ArrowLeft, Network, BookOpen, Target, Users } from "lucide-react";
+import { ArrowLeft, Network, BookOpen, ChartLine, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import SignalLabContent from "@/components/Laboratorio1/teoria";
 import { integrantes } from "@/lib/utils";
@@ -41,11 +41,11 @@ const Lab1 = () => {
               </h1>
             </div>
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 flex items-center justify-center bg-blue-100 border-2 border-blue-300 rounded-lg text-blue-700 text-xs text-center">
-                LOGO 1
+              <div className="w-20 h-20 flex items-center justify-center rounded-lg text-blue-700 text-xs text-center">
+                <img src="/Logo-UNNE.png" alt="" />
               </div>
-              <div className="w-20 h-20 flex items-center justify-center bg-blue-100 border-2 border-blue-300 rounded-lg text-blue-700 text-xs text-center">
-                LOGO 2
+              <div className="w-20 h-20 flex items-center justify-center rounded-lg text-blue-700 text-xs text-center">
+                <img src="/facena.png" alt="" />
               </div>
             </div>
           </div>
@@ -66,7 +66,7 @@ const Lab1 = () => {
                   value="graficos"
                   className="flex items-center gap-2"
                 >
-                  <Target className="w-4 h-4" />
+                  <ChartLine className="w-4 h-4" />
                   Graficos
                 </TabsTrigger>
               </TabsList>
