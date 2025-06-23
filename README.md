@@ -82,14 +82,5 @@ Aplicación web interactiva para los laboratorios de la materia Comunicaciónes 
 - `npm run preview` - Previsualiza la versión de producción
 - `npm run lint` - Ejecuta el linter
 
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor, abre un issue primero para discutir los cambios que te gustaría hacer.
-
----
 
 Desarrollado por el Grupo 25 para la materia Comunicaciónes de Datos - FACENA UNNE
