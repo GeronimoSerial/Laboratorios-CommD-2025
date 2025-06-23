@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Antenna } from "lucide-react";
 
 const DEFAULT_H1 = 30;
 const DEFAULT_H2 = 20;
@@ -74,6 +75,7 @@ const CalcDistancia = () => {
         </div>
         <div className="flex flex-row items-end justify-center gap-8 mt-8">
           <div className="flex flex-col items-center">
+            <Antenna className="w-8 h-8" />
             <div
               style={{
                 height: h1Px,
@@ -89,6 +91,7 @@ const CalcDistancia = () => {
             </span>
           </div>
           <div className="flex flex-col items-center">
+            {/* <Antenna className="w-8 h-8" /> */}
             <div
               style={{
                 height: 2,
@@ -104,6 +107,7 @@ const CalcDistancia = () => {
             </span>
           </div>
           <div className="flex flex-col items-center">
+            <Antenna className="w-8 h-8" />
             <div
               style={{
                 height: h2Px,

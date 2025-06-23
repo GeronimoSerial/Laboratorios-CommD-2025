@@ -62,7 +62,7 @@ const Lab4 = () => {
                   className="flex items-center gap-2"
                 >
                   <Target className="w-4 h-4" />
-                  Calculadora
+                  Calculadora Ganancia
                 </TabsTrigger>
                 <TabsTrigger
                   value="calculadora2"

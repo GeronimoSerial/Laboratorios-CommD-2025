@@ -1,12 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  ExternalLink,
-  Network,
-  Users,
-  GraduationCap,
-  BookOpen,
-} from "lucide-react";
+import { ExternalLink, Network, Users, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -63,14 +57,14 @@ const Index = () => {
           <div className="flex justify-center items-center gap-8 mb-8">
             <div className="backdrop-blur-sm p-4 rounded-xl shadow-lg w-40 h-40 md:w-40 md:h-40 flex items-center justify-center">
               <img
-                src="/public/Logo-UNNE.png"
+                src="/Logo-UNNE.png"
                 className="aspect-[308/308] object-contain"
                 alt=""
               />
             </div>
             <div className="backdrop-blur-sm p-4 rounded-xl shadow-lg w-40 h-40 md:w-40 md:h-40 flex items-center justify-center">
               <img
-                src="/public/facena.png"
+                src="/facena.png"
                 className="aspect-[308/308] object-contain"
                 alt=""
               />
