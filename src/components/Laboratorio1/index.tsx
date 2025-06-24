@@ -120,7 +120,7 @@ const Laboratorio1 = () => {
     if (!chartRef.current) return;
 
     const { frequency, amplitude } = formData;
-    const safeFrequency = frequency > 0 ? frequency : 1; // evitar división por cero
+    const safeFrequency = frequency > 0 ? frequency : 1; 
     const dataPoints = 2000;
     const totalTime = periodsToShow / safeFrequency;
     const data = [];

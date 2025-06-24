@@ -1,16 +1,18 @@
 import { useRef, useState, useEffect } from "react";
 import { Chart, registerables } from "chart.js";
-import { Card, CardContent } from "../ui/card";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
 
-Chart.register(...registerables);
+import annotationPlugin from "chartjs-plugin-annotation";
+
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Info } from "lucide-react";
+
+Chart.register(...registerables, annotationPlugin);
 
 const Laboratorio4 = () => {
   const [diameter, setDiameter] = useState(3);
   const [frequency, setFrequency] = useState(2);
   const [ganancia, setGanancia] = useState("");
+  const [warning, setWarning] = useState("");
   const chartFrequencyRef = useRef(null);
   const chartDiameterRef = useRef(null);
   const chartFrequency = useRef(null);
@@ -21,7 +23,6 @@ const Laboratorio4 = () => {
   }, [diameter, frequency]);
 
   useEffect(() => {
-    // Cleanup al desmontar
     return () => {
       if (chartFrequency.current) {
         chartFrequency.current.destroy();
@@ -32,43 +33,78 @@ const Laboratorio4 = () => {
     };
   }, []);
 
+  const validateInputs = () => {
+    // Validar combinaciones poco prácticas
+    if (frequency < 0.5 && diameter < 1) {
+      setWarning(
+        "Combinación poco práctica: antena pequeña con frecuencia baja"
+      );
+      return false;
+    }
+    if (frequency > 40 && diameter > 10) {
+      setWarning(
+        "Combinación poco práctica: antena grande con frecuencia muy alta"
+      );
+      return false;
+    }
+    setWarning("");
+    return true;
+  };
+
+  const calcularGananciaNumerica = (d, f) => {
+    if (!d || !f || d <= 0 || f <= 0) return null;
+    const area = Math.PI * Math.pow(d / 2, 2);
+    const lambda = 3e8 / (f * 1e9);
+    return 10 * Math.log10((7 * area) / Math.pow(lambda, 2));
+  };
+
   const calcularGanancia = () => {
-    if (!diameter || !frequency || diameter <= 0 || frequency <= 0) {
+    const valor = calcularGananciaNumerica(diameter, frequency);
+
+    if (valor === null) {
       setGanancia("N/A");
+      setWarning("Valores deben ser mayores que cero");
       return;
     }
 
-    const area = Math.PI * Math.pow(diameter / 2, 2);
-    const lambda = (3 * Math.pow(10, 8)) / (frequency * Math.pow(10, 9));
-    const gananciaValue = 10 * Math.log10((7 * area) / Math.pow(lambda, 2));
+    if (!validateInputs()) return;
 
-    setGanancia(gananciaValue.toFixed(2) + " dB");
-
-    // Actualizar gráficos
-    setTimeout(() => {
-      graficarPorFrecuencia();
-      graficarPorDiametro();
-    }, 100);
-  };
-
-  const graficarPorFrecuencia = () => {
-    if (!chartFrequencyRef.current) return;
-
-    const ctx = chartFrequencyRef.current.getContext("2d");
-    if (!ctx) return;
-
-    // Destruir gráfico anterior
-    if (chartFrequency.current) {
-      chartFrequency.current.destroy();
+    if (valor > 60) {
+      setWarning(
+        `Ganancia muy alta (${valor.toFixed(
+          2
+        )} dB). Puede ser poco práctica para implementación real.`
+      );
+    } else if (valor < 10) {
+      setWarning(
+        `Ganancia baja (${valor.toFixed(
+          2
+        )} dB). Considere aumentar tamaño o frecuencia.`
+      );
+    } else {
+      setWarning("");
     }
 
-    // Generar datos para frecuencia variable (diámetro fijo)
+    setGanancia(valor.toFixed(2) + " dB");
+    graficarPorFrecuencia(diameter, frequency);
+    graficarPorDiametro(diameter, frequency);
+  };
+
+  const graficarPorFrecuencia = (d, f) => {
+    if (!chartFrequencyRef.current) return;
+    const ctx = chartFrequencyRef.current.getContext("2d");
+    if (!ctx) return;
+    if (chartFrequency.current) chartFrequency.current.destroy();
+
     const data = [];
-    for (let f = 0.5; f <= 15; f += 0.5) {
-      const area = Math.PI * Math.pow(diameter / 2, 2);
-      const lambda = (3 * Math.pow(10, 8)) / (f * Math.pow(10, 9));
-      const gananciaCalc = 10 * Math.log10((7 * area) / Math.pow(lambda, 2));
-      data.push({ x: f, y: gananciaCalc });
+    const practical = [];
+    const maxF = Math.max(15, f * 1.2);
+    const step = maxF <= 15 ? 0.5 : 1;
+
+    for (let freq = 0.5; freq <= maxF; freq += step) {
+      const valor = calcularGananciaNumerica(d, freq);
+      data.push({ x: freq, y: valor });
+      practical.push({ x: freq, y: freq >= 3 && freq <= 30 ? valor : null });
     }
 
     chartFrequency.current = new Chart(ctx, {
@@ -81,9 +117,15 @@ const Laboratorio4 = () => {
             borderColor: "rgb(59, 130, 246)",
             backgroundColor: "rgba(59, 130, 246, 0.1)",
             fill: false,
-            pointRadius: 2,
-            pointHoverRadius: 5,
             tension: 0.1,
+          },
+          {
+            label: "Rango práctico (3-30 GHz)",
+            data: practical,
+            borderColor: "rgb(16, 185, 129)",
+            backgroundColor: "rgba(16, 185, 129, 0.1)",
+            fill: false,
+            borderDash: [5, 5],
           },
         ],
       },
@@ -93,76 +135,57 @@ const Laboratorio4 = () => {
         plugins: {
           title: {
             display: true,
-            text: `Ganancia vs Frecuencia (Diámetro fijo: ${diameter}m)`,
-            font: {
-              size: 14,
-              weight: "bold",
-            },
+            text: `Ganancia vs Frecuencia (Diámetro fijo: ${d}m)`,
           },
-          legend: {
-            display: true,
-            position: "top",
+          annotation: {
+            annotations: {
+              lineaActual: {
+                type: "line",
+                scaleID: "x",
+                value: f,
+                borderColor: "red",
+                borderDash: [6, 6],
+                borderWidth: 2,
+                label: {
+                  display: true,
+                  content: `f = ${f} GHz`,
+                  position: "start",
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                },
+              },
+            },
           },
         },
         scales: {
           x: {
             type: "linear",
-            title: {
-              display: true,
-              text: "Frecuencia de la antena (GHz)",
-              font: {
-                weight: "bold",
-              },
-            },
-            grid: {
-              display: true,
-              color: "rgba(0, 0, 0, 0.1)",
-            },
+            title: { display: true, text: "Frecuencia (GHz)" },
           },
           y: {
-            title: {
-              display: true,
-              text: "Ganancia (dB)",
-              font: {
-                weight: "bold",
-              },
-            },
-            grid: {
-              display: true,
-              color: "rgba(0, 0, 0, 0.1)",
-            },
+            title: { display: true, text: "Ganancia (dB)" },
+            min: 0,
+            max: Math.max(...data.map((d) => d.y)) + 10,
           },
-        },
-        animation: {
-          duration: 750,
-          easing: "easeInOutQuart",
-        },
-        interaction: {
-          intersect: false,
-          mode: "index",
         },
       },
     });
   };
 
-  const graficarPorDiametro = () => {
+  const graficarPorDiametro = (d, f) => {
     if (!chartDiameterRef.current) return;
-
     const ctx = chartDiameterRef.current.getContext("2d");
     if (!ctx) return;
+    if (chartDiameter.current) chartDiameter.current.destroy();
 
-    // Destruir gráfico anterior
-    if (chartDiameter.current) {
-      chartDiameter.current.destroy();
-    }
-
-    // Generar datos para diámetro variable (frecuencia fija)
     const data = [];
-    for (let d = 0.5; d <= 15; d += 0.5) {
-      const area = Math.PI * Math.pow(d / 2, 2);
-      const lambda = (3 * Math.pow(10, 8)) / (frequency * Math.pow(10, 9));
-      const gananciaCalc = 10 * Math.log10((7 * area) / Math.pow(lambda, 2));
-      data.push({ x: d, y: gananciaCalc });
+    const practical = [];
+    const maxD = Math.max(15, d * 1.2);
+    const step = maxD <= 15 ? 0.5 : 1;
+
+    for (let dia = 0.5; dia <= maxD; dia += step) {
+      const valor = calcularGananciaNumerica(dia, f);
+      data.push({ x: dia, y: valor });
+      practical.push({ x: dia, y: dia >= 0.5 && dia <= 5 ? valor : null });
     }
 
     chartDiameter.current = new Chart(ctx, {
@@ -175,9 +198,15 @@ const Laboratorio4 = () => {
             borderColor: "rgb(34, 197, 94)",
             backgroundColor: "rgba(34, 197, 94, 0.1)",
             fill: false,
-            pointRadius: 2,
-            pointHoverRadius: 5,
             tension: 0.1,
+          },
+          {
+            label: "Rango práctico (0.5-5m)",
+            data: practical,
+            borderColor: "rgb(59, 130, 246)",
+            backgroundColor: "rgba(59, 130, 246, 0.1)",
+            fill: false,
+            borderDash: [5, 5],
           },
         ],
       },
@@ -187,53 +216,45 @@ const Laboratorio4 = () => {
         plugins: {
           title: {
             display: true,
-            text: `Ganancia vs Diámetro (Frecuencia fija: ${frequency}GHz)`,
-            font: {
-              size: 14,
-              weight: "bold",
+            text: `Ganancia vs Diámetro (Frecuencia fija: ${f}GHz)`,
+          },
+          annotation: {
+            annotations: {
+              lineaActual: {
+                type: "line",
+                scaleID: "x",
+                value: d,
+                borderColor: "red",
+                borderDash: [6, 6],
+                borderWidth: 2,
+                label: {
+                  display: true,
+                  content: `D = ${d} m`,
+                  position: "start",
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                },
+              },
             },
           },
-          legend: {
-            display: true,
-            position: "top",
+          tooltip: {
+            callbacks: {
+              label: (context) =>
+                `${context.dataset.label}: ${context.parsed.y.toFixed(
+                  2
+                )} dB @ ${context.parsed.x} m`,
+            },
           },
         },
         scales: {
           x: {
             type: "linear",
-            title: {
-              display: true,
-              text: "Diámetro de la antena (m)",
-              font: {
-                weight: "bold",
-              },
-            },
-            grid: {
-              display: true,
-              color: "rgba(0, 0, 0, 0.1)",
-            },
+            title: { display: true, text: "Diámetro (m)" },
           },
           y: {
-            title: {
-              display: true,
-              text: "Ganancia (dB)",
-              font: {
-                weight: "bold",
-              },
-            },
-            grid: {
-              display: true,
-              color: "rgba(0, 0, 0, 0.1)",
-            },
+            title: { display: true, text: "Ganancia (dB)" },
+            min: 0,
+            max: Math.max(...data.map((d) => d.y)) + 10,
           },
-        },
-        animation: {
-          duration: 750,
-          easing: "easeInOutQuart",
-        },
-        interaction: {
-          intersect: false,
-          mode: "index",
         },
       },
     });
@@ -258,6 +279,14 @@ const Laboratorio4 = () => {
       <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
         Calculadora de Ganancia de Antena
       </h2>
+
+      {warning && (
+        <Alert variant="default" className="mb-6">
+          <Info className="h-4 w-4" />
+          <AlertTitle>Advertencia</AlertTitle>
+          <AlertDescription>{warning}</AlertDescription>
+        </Alert>
+      )}
 
       <div className="bg-gray-50 p-6 rounded-lg mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -356,16 +385,20 @@ const Laboratorio4 = () => {
             <p className="font-mono bg-gray-100 p-2 rounded mt-2">
               G = 10 × log₁₀((7 × A) / λ²)
             </p>
+            <p className="mt-2">
+              Donde 7 representa la eficiencia aproximada (70%) de la antena
+              parabólica.
+            </p>
           </div>
           <div>
             <p>
-              <strong>Donde:</strong>
+              <strong>Rangos prácticos:</strong>
             </p>
             <ul className="list-disc list-inside mt-2 space-y-1">
-              <li>G = Ganancia en dB</li>
-              <li>A = Área de la antena (π × r²)</li>
-              <li>λ = Longitud de onda (c / f)</li>
-              <li>c = Velocidad de la luz (3×10⁸ m/s)</li>
+              <li>Diámetros típicos: 0.5m a 5m</li>
+              <li>Frecuencias comunes: 3GHz a 30GHz (bandas C, Ku, Ka)</li>
+              <li>Ganancias prácticas: 20dB a 50dB</li>
+              <li>Eficiencia típica: 50% a 75%</li>
             </ul>
           </div>
         </div>
@@ -373,128 +406,5 @@ const Laboratorio4 = () => {
     </div>
   );
 };
-
-const DEFAULT_H1 = 30;
-const DEFAULT_H2 = 20;
-
-const CalcLaboratorio4 = () => {
-  const [altura1, setAltura1] = useState(DEFAULT_H1);
-  const [altura2, setAltura2] = useState(DEFAULT_H2);
-  const [distancia, setDistancia] = useState<number | null>(null);
-
-  const calcular = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    const d =
-      3.57 * (Math.sqrt((4 / 3) * altura1) + Math.sqrt((4 / 3) * altura2));
-    setDistancia(d);
-  };
-
-  // Calcular al inicio y cuando cambian los valores
-  useEffect(() => {
-    calcular();
-    // eslint-disable-next-line
-  }, [altura1, altura2]);
-
-  // Para la "gráfica" visual simple
-  const maxAltura = Math.max(altura1, altura2, 50);
-  const escala = 100 / maxAltura;
-  const h1Px = Math.max(altura1 * escala, 10);
-  const h2Px = Math.max(altura2 * escala, 10);
-
-  return (
-    <Card className="w-full">
-      <CardContent className="pt-6">
-        <h2 className="text-xl font-bold mb-4 text-center">
-          Cálculo de Distancia Máxima LOS
-        </h2>
-        <form
-          onSubmit={calcular}
-          className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"
-        >
-          <div className="space-y-2">
-            <Label htmlFor="altura-antena1">Altura Antena 1 (metros):</Label>
-            <Input
-              type="number"
-              id="altura-antena1"
-              min={0}
-              step={0.1}
-              value={altura1}
-              onChange={(e) => setAltura1(Number(e.target.value))}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="altura-antena2">Altura Antena 2 (metros):</Label>
-            <Input
-              type="number"
-              id="altura-antena2"
-              min={0}
-              step={0.1}
-              value={altura2}
-              onChange={(e) => setAltura2(Number(e.target.value))}
-              required
-            />
-          </div>
-        </form>
-        <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-6">
-          {distancia !== null && (
-            <h4 className="font-semibold">
-              Distancia máxima LOS: <span>{distancia.toFixed(2)} km</span>
-            </h4>
-          )}
-        </div>
-        <div className="flex flex-row items-end justify-center gap-8 mt-8">
-          <div className="flex flex-col items-center">
-            <div
-              style={{
-                height: h1Px,
-                width: 30,
-                background: "#3b82f6",
-                borderRadius: 6,
-                marginBottom: 4,
-              }}
-            />
-            <span className="text-xs">
-              Antena 1<br />
-              {altura1} m
-            </span>
-          </div>
-          <div className="flex flex-col items-center">
-            <div
-              style={{
-                height: 2,
-                width: 80,
-                background: "#10b981",
-                marginBottom: 4,
-              }}
-            />
-            <span className="text-xs">
-              Distancia
-              <br />
-              {distancia?.toFixed(2) ?? "-"} km
-            </span>
-          </div>
-          <div className="flex flex-col items-center">
-            <div
-              style={{
-                height: h2Px,
-                width: 30,
-                background: "#f59e42",
-                borderRadius: 6,
-                marginBottom: 4,
-              }}
-            />
-            <span className="text-xs">
-              Antena 2<br />
-              {altura2} m
-            </span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-export { CalcLaboratorio4 };
 
 export default Laboratorio4;
