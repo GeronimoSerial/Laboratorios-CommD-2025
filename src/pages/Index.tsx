@@ -38,7 +38,7 @@ const Index = () => {
 
   const integrantes = [
     { nombre: "Fabian Gustavo Quintana", dni: "45.678.901" },
-    { nombre: "Geraldine Janet Rodriguez", dni: "56.789.012" },
+    { nombre: "Geraldine Janet Rodriguez", dni: "43.208.931" },
     { nombre: "Geronimo Serial", dni: "42.603.578" },
     { nombre: "Leonel Francisco Alegre", dni: "45.169.283" },
     { nombre: "Máximo Tomás Riveros", dni: "45.643.192" },
