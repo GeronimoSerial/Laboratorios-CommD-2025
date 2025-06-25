@@ -17,7 +17,7 @@ const Laboratorio1 = () => {
   const chartRef = useRef<Chart | null>(null);
 
   const [frecuencias, setFrecuencias] = useState(1);
-  const [waveType, setWaveType] = useState<"sine" | "square">("sine");
+  const [waveType, setWaveType] = useState<"seno" | "cuadrada">("seno");
   const [periodsToShow, setPeriodsToShow] = useState(2);
 
   const [formData, setFormData] = useState({
@@ -34,7 +34,7 @@ const Laboratorio1 = () => {
 
   // Memoizar etiqueta de la onda
   const waveLabel = useMemo(() => {
-    return waveType === "sine"
+    return waveType === "seno"
       ? `Senoide (${formData.frequency} Hz)`
       : `Onda Cuadrada (${frecuencias} armónicos)`;
   }, [waveType, formData.frequency, frecuencias]);
@@ -120,14 +120,14 @@ const Laboratorio1 = () => {
     if (!chartRef.current) return;
 
     const { frequency, amplitude } = formData;
-    const safeFrequency = frequency > 0 ? frequency : 1; 
+    const safeFrequency = frequency > 0 ? frequency : 1;
     const dataPoints = 2000;
     const totalTime = periodsToShow / safeFrequency;
     const data = [];
 
     // Estimación teórica de amplitud máxima
     let maxAmplitude = amplitude;
-    if (waveType === "square") {
+    if (waveType === "cuadrada") {
       const harmonics = Array.from(
         { length: frecuencias },
         (_, i) => 2 * i + 1
@@ -140,7 +140,7 @@ const Laboratorio1 = () => {
       const x = (i / dataPoints) * totalTime;
       let y = 0;
 
-      if (waveType === "sine") {
+      if (waveType === "seno") {
         y = amplitude * Math.sin(2 * Math.PI * frequency * x + phaseInRadians);
       } else {
         for (let j = 1; j <= 2 * frecuencias - 1; j += 2) {
@@ -228,20 +228,20 @@ const Laboratorio1 = () => {
             <Label>Tipo de Onda:</Label>
             <Select
               value={waveType}
-              onValueChange={(v) => setWaveType(v as "sine" | "square")}
+              onValueChange={(v) => setWaveType(v as "seno" | "cuadrada")}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Seleccione" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="sine">Sinusoidal</SelectItem>
-                <SelectItem value="square">Cuadrada</SelectItem>
+                <SelectItem value="seno">Sinusoidal</SelectItem>
+                <SelectItem value="cuadrada">Cuadrada</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        {waveType === "square" && (
+        {waveType === "cuadrada" && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="space-y-2">
               <Label>Armónicos: {frecuencias}</Label>
