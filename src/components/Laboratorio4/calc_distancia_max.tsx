@@ -22,7 +22,6 @@ const CalcDistancia = () => {
   // Calcular al inicio y cuando cambian los valores
   useEffect(() => {
     calcular();
-    // eslint-disable-next-line
   }, [altura1, altura2]);
 
   // Para la "gráfica" visual simple

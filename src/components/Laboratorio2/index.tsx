@@ -7,59 +7,59 @@ import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
 
 const Laboratorio2 = () => {
-  const nyquistChartRef = useRef<HTMLCanvasElement>(null);
-  const shannonChartRef = useRef<HTMLCanvasElement>(null);
-  const [bandwidth, setBandwidth] = useState(1000);
-  const [levels, setLevels] = useState(2);
+  const refGraficoNyquist = useRef<HTMLCanvasElement>(null);
+  const refGraficoShannon = useRef<HTMLCanvasElement>(null);
+  const [anchoBanda, setAnchoBanda] = useState(1000);
+  const [niveles, setNiveles] = useState(2);
   const [snr, setSnr] = useState(10);
-  const [nyquistResult, setNyquistResult] = useState<string>("");
-  const [shannonResult, setShannonResult] = useState<string>("");
-  const nyquistChart = useRef<Chart | null>(null);
-  const shannonChart = useRef<Chart | null>(null);
+  const [resultadoNyquist, setResultadoNyquist] = useState<string>("");
+  const [resultadoShannon, setResultadoShannon] = useState<string>("");
+  const graficoNyquist = useRef<Chart | null>(null);
+  const graficoShannon = useRef<Chart | null>(null);
 
   useEffect(() => {
-    const snrLinear = Math.pow(10, snr / 10);
-    const nyquistCapacity = 2 * bandwidth * Math.log2(levels);
-    const shannonCapacity = bandwidth * Math.log2(1 + snrLinear);
-    setNyquistResult(
-      `Capacidad según Nyquist: ${nyquistCapacity.toLocaleString("es-ES", {
+    const snrLineal = Math.pow(10, snr / 10);
+    const capacidadNyquist = 2 * anchoBanda * Math.log2(niveles);
+    const capacidadShannon = anchoBanda * Math.log2(1 + snrLineal);
+    setResultadoNyquist(
+      `Capacidad según Nyquist: ${capacidadNyquist.toLocaleString("es-ES", {
         maximumFractionDigits: 2,
       })} bps`
     );
-    setShannonResult(
-      `Capacidad según Shannon: ${shannonCapacity.toLocaleString("es-ES", {
+    setResultadoShannon(
+      `Capacidad según Shannon: ${capacidadShannon.toLocaleString("es-ES", {
         maximumFractionDigits: 2,
       })} bps`
     );
     graficarNyquist();
     graficarShannon();
-  }, [bandwidth, levels, snr]);
+  }, [anchoBanda, niveles, snr]);
 
-  const calculateChannelCapacity = (levels: number, bandwidth: number) => {
-    const data = [];
-    for (let i = 2; i <= levels * 2; i++) {
-      const capacity = 2 * bandwidth * Math.log2(i);
-      data.push({ x: i, y: capacity });
+  const calcularCapacidadNyquist = (niveles: number, anchoBanda: number) => {
+    const datos = [];
+    for (let i = 2; i <= niveles * 2; i++) {
+      const capacidad = 2 * anchoBanda * Math.log2(i);
+      datos.push({ x: i, y: capacidad });
     }
-    return data;
+    return datos;
   };
 
   const graficarNyquist = () => {
-    if (!nyquistChartRef.current) return;
-    const ctx = nyquistChartRef.current.getContext("2d");
+    if (!refGraficoNyquist.current) return;
+    const ctx = refGraficoNyquist.current.getContext("2d");
     if (!ctx) return;
 
-    if (nyquistChart.current) nyquistChart.current.destroy();
+    if (graficoNyquist.current) graficoNyquist.current.destroy();
 
-    const chartData = calculateChannelCapacity(levels, bandwidth);
+    const datosGrafico = calcularCapacidadNyquist(niveles, anchoBanda);
 
-    nyquistChart.current = new Chart(ctx, {
+    graficoNyquist.current = new Chart(ctx, {
       type: "line",
       data: {
         datasets: [
           {
             label: "Capacidad del canal (bps)",
-            data: chartData,
+            data: datosGrafico,
             borderColor: "#3b82f6",
             backgroundColor: "rgba(59, 130, 246, 0.1)",
             borderWidth: 2,
@@ -124,31 +124,31 @@ const Laboratorio2 = () => {
     });
   };
 
-  const calculateShannonCapacity = (snr: number, bandwidth: number) => {
-    const data = [];
+  const calcularCapacidadShannon = (snr: number, anchoBanda: number) => {
+    const datos = [];
     for (let i = 2; i <= 100; i++) {
-      const capacity = bandwidth * Math.log2(1 + (snr * i) / 100);
-      data.push({ x: i, y: capacity });
+      const capacidad = anchoBanda * Math.log2(1 + (snr * i) / 100);
+      datos.push({ x: i, y: capacidad });
     }
-    return data;
+    return datos;
   };
 
   const graficarShannon = () => {
-    if (!shannonChartRef.current) return;
-    const ctx = shannonChartRef.current.getContext("2d");
+    if (!refGraficoShannon.current) return;
+    const ctx = refGraficoShannon.current.getContext("2d");
     if (!ctx) return;
 
-    if (shannonChart.current) shannonChart.current.destroy();
+    if (graficoShannon.current) graficoShannon.current.destroy();
 
-    const chartData = calculateShannonCapacity(snr, bandwidth);
+    const datosGrafico = calcularCapacidadShannon(snr, anchoBanda);
 
-    shannonChart.current = new Chart(ctx, {
+    graficoShannon.current = new Chart(ctx, {
       type: "line",
       data: {
         datasets: [
           {
             label: "Capacidad del canal (bps)",
-            data: chartData,
+            data: datosGrafico,
             borderColor: "#ef4444",
             backgroundColor: "rgba(239, 68, 68, 0.1)",
             borderWidth: 2,
@@ -225,30 +225,30 @@ const Laboratorio2 = () => {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
         >
           <div className="space-y-2">
-            <Label htmlFor="bandwidth" className="font-medium text-gray-700">
+            <Label htmlFor="anchoBanda" className="font-medium text-gray-700">
               Ancho de banda (Hz):
             </Label>
             <Input
               type="number"
-              id="bandwidth"
+              id="anchoBanda"
               min={1}
               step={0.1}
-              value={bandwidth}
-              onChange={(e) => setBandwidth(Number(e.target.value))}
+              value={anchoBanda}
+              onChange={(e) => setAnchoBanda(Number(e.target.value))}
               className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="levels" className="font-medium text-gray-700">
+            <Label htmlFor="niveles" className="font-medium text-gray-700">
               Niveles de modulación:
             </Label>
             <Input
               type="number"
-              id="levels"
+              id="niveles"
               min={2}
-              value={levels}
-              onChange={(e) => setLevels(Number(e.target.value))}
+              value={niveles}
+              onChange={(e) => setNiveles(Number(e.target.value))}
               className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
               required
             />
@@ -271,8 +271,8 @@ const Laboratorio2 = () => {
         </form>
 
         <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-8 bg-gray-50 p-4 rounded-md">
-          <p className="font-medium text-blue-600">{nyquistResult}</p>
-          <p className="font-medium text-red-600">{shannonResult}</p>
+          <p className="font-medium text-blue-600">{resultadoNyquist}</p>
+          <p className="font-medium text-red-600">{resultadoShannon}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -281,7 +281,7 @@ const Laboratorio2 = () => {
               Capacidad según Nyquist
             </h5>
             <div className="w-full aspect-[16/9]">
-              <canvas ref={nyquistChartRef} />
+              <canvas ref={refGraficoNyquist} />
             </div>
           </div>
           <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
@@ -289,7 +289,7 @@ const Laboratorio2 = () => {
               Capacidad según Shannon
             </h5>
             <div className="w-full aspect-[16/9]">
-              <canvas ref={shannonChartRef} />
+              <canvas ref={refGraficoShannon} />
             </div>
           </div>
         </div>
